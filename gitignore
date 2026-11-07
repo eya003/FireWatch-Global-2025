@@ -1,0 +1,48 @@
+# ==============================================
+# .gitignore - Projet Big Data : feux de foret
+# ==============================================
+
+# --- Fichiers systeme Windows / macOS ---
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# --- Editeurs ---
+.vscode/
+.idea/
+
+# --- Secrets : cle API NASA FIRMS ---
+.env
+*.key
+*map_key*
+
+# --- Journaux ---
+logs/
+*.log
+derby.log
+
+# --- Fichiers generes par le module C ---
+alerts.csv
+puts_*.hbase
+test*.csv
+test*.hbase
+
+# --- Fichiers generes par Spark / Hive ---
+metastore_db/
+spark-warehouse/
+*.crc
+
+# --- Sorties Hadoop recuperees en local ---
+_SUCCESS
+part-*
+
+# --- Python ---
+__pycache__/
+*.pyc
+
+# --- Donnees volumineuses (limite GitHub : 100 Mo par fichier) ---
+# On garde les petits fichiers (Tunisie, sample), on exclut le fichier mondial.
+*.zip
+data/*all_countries*
+data/*world*
+data/raw/

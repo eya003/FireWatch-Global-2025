@@ -1,0 +1,15 @@
+# create_tables.hbase - Membre C
+# Cree les 3 tables HBase du contrat commun.
+# Lancement : hbase shell create_tables.hbase
+
+# Comptages par mois : MapReduce (famille mr) et Spark (famille spark) cote a cote
+create 'fire_monthly', {NAME=>'mr', VERSIONS=>1}, {NAME=>'spark', VERSIONS=>1}
+
+# Statistiques par zone et par mois (resultats Spark du membre B)
+create 'fire_zone', {NAME=>'stats', VERSIONS=>1}
+
+# Alertes temps reel : on garde les 10 dernieres alertes de chaque zone
+create 'fire_alerts', {NAME=>'last', VERSIONS=>10}
+
+list
+exit

@@ -1,0 +1,41 @@
+# queries_demo.hbase - Membre C
+# Requetes de demonstration HBase (get, scan, filtres, versions, plages de temps).
+# Lancement : hbase shell queries_demo.hbase
+
+puts "===== 1. Les tables du projet ====="
+list
+
+puts "===== 2. Nombre de zones ayant eu au moins une alerte ====="
+count 'fire_alerts'
+
+puts "===== 3. GET : derniere alerte de la zone la plus touchee (36.5_9.0) ====="
+get 'fire_alerts', '36.5_9.0'
+
+puts "===== 4. VERSIONS : historique des alertes de cette zone (jusqu'a 10) ====="
+get 'fire_alerts', '36.5_9.0', {COLUMN=>['last:acq_date','last:acq_time','last:frp'], VERSIONS=>10}
+
+puts "===== 5. SCAN : derniere alerte de chaque zone (date et intensite) ====="
+scan 'fire_alerts', {COLUMNS=>['last:acq_date','last:frp']}
+
+puts "===== 6. PREFIXE de cle : zones de la bande de latitude 36 (Nord-Ouest) ====="
+scan 'fire_alerts', {ROWPREFIXFILTER=>'36.', COLUMNS=>['last:acq_date']}
+
+puts "===== 7. FILTRE sur valeur : zones dont la derniere alerte est de confiance haute ====="
+scan 'fire_alerts', {FILTER=>"SingleColumnValueFilter('last', 'confidence', =, 'binary:h')", COLUMNS=>['last:acq_date','last:frp','last:confidence']}
+
+puts "===== 8. FILTRE sur date : zones dont la derniere alerte date de septembre 2025 ou apres ====="
+scan 'fire_alerts', {FILTER=>"SingleColumnValueFilter('last', 'acq_date', >=, 'binary:2025-09-01')", COLUMNS=>['last:acq_date']}
+
+puts "===== 9. TIMERANGE : toutes les alertes de septembre 2025 (grace aux timestamps de detection) ====="
+scan 'fire_alerts', {COLUMNS=>['last:acq_date'], TIMERANGE=>[1756684800000, 1759276800000], VERSIONS=>10}
+
+puts "===== 10. PIEGE : comparer des nombres stockes en texte (frp >= 50) ====="
+scan 'fire_alerts', {FILTER=>"SingleColumnValueFilter('last', 'frp', >=, 'binary:50')", COLUMNS=>['last:frp']}
+
+# --- A activer apres l'integration (J4), quand les CSV de A et B seront charges ---
+# puts "===== 11. MapReduce et Spark cote a cote pour septembre 2025 ====="
+# get 'fire_monthly', '2025-09'
+# puts "===== 12. Tous les mois d'une zone (scan par prefixe de cle) ====="
+# scan 'fire_zone', {ROWPREFIXFILTER=>'36.5_9.0#'}
+
+exit
