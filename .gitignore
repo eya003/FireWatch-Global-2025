@@ -39,6 +39,11 @@ part-*
 # --- Python ---
 __pycache__/
 *.pyc
+.venv/
+.pytest_cache/
+**/.streamlit/secrets.toml
+*.tmp
+*.temp
 
 # --- Donnees volumineuses (limite GitHub : 100 Mo par fichier) ---
 # On garde les petits fichiers (Tunisie, sample), on exclut le fichier mondial.

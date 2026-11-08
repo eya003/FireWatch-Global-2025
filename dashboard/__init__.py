@@ -1,0 +1,1 @@
+"""FireWatch dashboard application package."""
