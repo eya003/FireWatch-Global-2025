@@ -174,7 +174,8 @@ def test_trends_insights_page_renders_all_three_scopes():
     assert len(app.get("plotly_chart")) == 2
 
 
-def test_live_monitoring_is_explicitly_disconnected_without_alert_data():
+def test_live_monitoring_is_explicitly_disconnected_without_alert_data(monkeypatch):
+    monkeypatch.setenv("FIREWATCH_LIVE_SOURCE", "off")
     app = AppTest.from_file(str(APP_PATH), default_timeout=30).run()
     app.switch_page("pages/live_monitoring.py").run()
 
@@ -184,3 +185,18 @@ def test_live_monitoring_is_explicitly_disconnected_without_alert_data():
     assert any("Recent alerts will appear after the HBase reader is connected." in item.value for item in app.info)
     assert len(app.dataframe) == 0
     assert len(app.get("plotly_chart")) == 0
+
+
+def test_live_monitoring_renders_recorded_replay_snapshot(monkeypatch):
+    monkeypatch.setenv("FIREWATCH_LIVE_SOURCE", "snapshot")
+    app = AppTest.from_file(str(APP_PATH), default_timeout=45).run()
+    app.switch_page("pages/live_monitoring.py").run()
+
+    assert not app.exception
+    assert app.selectbox(key="live_source").value == "Recorded replay (snapshot)"
+    assert any("Recorded replay" in item.value for item in app.markdown)
+    assert any(">70<" in item.value for item in app.markdown)
+    assert len(app.dataframe) == 1
+    assert len(app.dataframe[0].value) == 15
+    assert app.selectbox(key="live_context_zone").value == "36.5_9.0"
+    assert len(app.get("plotly_chart")) == 2
