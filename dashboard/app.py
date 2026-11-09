@@ -55,6 +55,6 @@ with st.sidebar:
     st.markdown("### Global Fire Intelligence")
     st.caption("NASA FIRMS Â· VIIRS S-NPP")
     st.divider()
-    st.caption("Data period Â· 2025")
+    st.caption("Data period . 2025")
 
 page.run()
