@@ -7,7 +7,7 @@ The dashboard contains **Overview**, **Fire Explorer**, **Trends & Insights**, a
 - Python 3.10 or newer
 - The four CSV exports in `module_A_mapreduce/exports/`
 - Spark exports `country_summary.csv`, `country_monthly.csv`, `monthly_spark.csv`, and `top10_days.csv` in `module_B_spark/results/final/`
-- Optional Spark `world_country_summary.csv` for the Overview Top 10 countries chart. Its producer must be verified as worldwide 2025 type 0 before use.
+- Spark `world_top_countries.csv` (`rank,country,fire_count`) for the Overview Top 10 countries chart.
 
 ## Create an environment and install dependencies
 

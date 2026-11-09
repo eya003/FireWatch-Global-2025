@@ -3,7 +3,7 @@ from pathlib import Path
 from streamlit.testing.v1 import AppTest
 
 from dashboard import visuals
-from dashboard.world_country_data import WORLD_COUNTRY_SUMMARY_PATH, load_world_country_summary
+from dashboard.world_country_data import WORLD_TOP_COUNTRIES_PATH, load_world_top_countries
 
 
 APP_PATH = Path(__file__).resolve().parents[1] / "app.py"
@@ -23,34 +23,38 @@ def test_trends_page_plotly_helpers_import_from_dashboard_visuals():
     assert all(callable(getattr(visuals, name, None)) for name in expected_helpers)
 
 
-def test_world_country_summary_is_not_present_and_no_top10_is_invented():
-    assert not WORLD_COUNTRY_SUMMARY_PATH.exists()
+def test_world_top_countries_renders_on_overview():
+    assert WORLD_TOP_COUNTRIES_PATH.exists()
     app = AppTest.from_file(str(APP_PATH), default_timeout=30).run()
 
     assert not app.exception
     assert any("Top 10 Countries by Fire Detections" in item.value for item in app.markdown)
-    assert any("world_country_summary.csv" in item.value for item in app.info)
+    assert not any("world_top_countries.csv" in item.value for item in app.info)
     assert not any("Most active geographic cells" in item.value for item in app.markdown)
 
 
-def test_world_country_summary_loader_reports_missing_and_rejects_bad_contract(tmp_path):
+def test_world_top_countries_loader_reports_missing_and_rejects_bad_contract(tmp_path):
     import pandas as pd
     import pytest
 
     from dashboard.data import DataValidationError
 
-    missing = tmp_path / "world_country_summary.csv"
+    missing = tmp_path / "world_top_countries.csv"
     with pytest.raises(DataValidationError, match="not available"):
-        load_world_country_summary(missing)
+        load_world_top_countries(missing)
 
-    pd.DataFrame({"country": ["A", "B"], "count": [2, 4]}).to_csv(missing, index=False)
-    summary = load_world_country_summary(missing)
+    pd.DataFrame(
+        {"rank": [1, 2], "country": ["A", "B"], "fire_count": [2, 4]}
+    ).to_csv(missing, index=False)
+    summary = load_world_top_countries(missing)
     assert summary["country"].tolist() == ["B", "A"]
     assert summary["count"].tolist() == [4, 2]
 
-    pd.DataFrame({"country": ["A", "A"], "count": [2, 1]}).to_csv(missing, index=False)
+    pd.DataFrame(
+        {"rank": [1, 2], "country": ["A", "A"], "fire_count": [2, 1]}
+    ).to_csv(missing, index=False)
     with pytest.raises(DataValidationError, match="duplicate countries"):
-        load_world_country_summary(missing)
+        load_world_top_countries(missing)
 
 
 def test_overview_page_renders_without_streamlit_errors():

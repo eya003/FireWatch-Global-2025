@@ -205,8 +205,8 @@ def country_ranking_chart(comparison):
     return figure
 
 
-def world_country_summary_chart(countries):
-    """Horizontal Top 10 chart for a verified worldwide type 0 export."""
+def world_top_countries_chart(countries):
+    """Horizontal Top 10 chart for the worldwide top-countries export."""
     data = countries.sort_values(["count", "country"], ascending=[True, True]).copy()
     figure = px.bar(
         data,

@@ -11,9 +11,9 @@ from dashboard.data_access import get_fire_data
 from dashboard.visuals import (
     monthly_detections_chart,
     type_distribution_chart,
-    world_country_summary_chart,
+    world_top_countries_chart,
 )
-from dashboard.world_country_data import get_world_country_summary
+from dashboard.world_country_data import get_world_top_countries
 
 
 try:
@@ -102,14 +102,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 try:
-    world_countries = get_world_country_summary()
+    world_countries = get_world_top_countries()
 except DataValidationError as error:
     st.info(
         "Worldwide country ranking is unavailable: {} No geographic-cell estimate is substituted.".format(error)
     )
 else:
     st.plotly_chart(
-        world_country_summary_chart(world_countries),
+        world_top_countries_chart(world_countries),
         use_container_width=True,
         config={"displayModeBar": False},
     )
